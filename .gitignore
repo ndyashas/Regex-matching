@@ -1,0 +1,5 @@
+# Ignore the object files
+*.o
+
+# Ignore the client executable
+client
