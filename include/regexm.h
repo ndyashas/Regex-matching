@@ -3,16 +3,17 @@
 
 
 typedef struct NFA_STATE{
-        struct NFA_STATE *next_states;   // Array of states that come next.
+        struct NFA_STATE **next_states;  // Array of states that come next.
+        struct NFA_STATE **prev_states;  // Array of states that came before.
 	int number_of_next_states;       // Number of states that come next.
+	int number_of_prev_states;       // Number of states that came before.
 	char nfa_state_char;             // The current state's char data.
 	int end_state;                   // Is this state an 'end' state?: 1 - Yes, 0 - No.
 }NFA_STATE;
 
 typedef struct NFA{
 	struct NFA_STATE *init_state;    // The initial NFA state.
-    	struct NFA_STATE **end_states;   // The final states in the NFA. This will be
-	                                 // used for stringing NFAs together.
+	struct NFA_STATE *end_state;     // The final state in the NFA.
 }NFA;
 
 void init_nfa(NFA **nfa);
