@@ -23,4 +23,5 @@ void release_nfa_state(NFA_STATE **nfa_state);
 
 int check_match(NFA **nfa, char *test_string);
 
+void _recursive_nfa_state_release(NFA_STATE *nfa_state);
 #endif
