@@ -19,7 +19,9 @@ int main()
 
 	// Construct the nfa
 	NFA_STATE *a0, *b0, *c0, *d0, *e0, *f0, *g0, *h0;
+	NFA_STATE *init_state;
 
+	init_nfa_state(&init_state);
 	init_nfa_state(&a0);
 	init_nfa_state(&b0);
 	init_nfa_state(&c0);
@@ -29,7 +31,19 @@ int main()
 	init_nfa_state(&g0);
 	init_nfa_state(&h0);
 
+
+	// 'init'
+	init_state->number_of_next_states = 1;
+	init_state->next_states = (NFA_STATE **)malloc(sizeof(NFA_STATE *)
+					       *(init_state->number_of_next_states));
+	init_state->next_states[0] = a0;
+
+
 	// 'a'
+	a0->number_of_prev_states = 1;
+	a0->prev_states = (NFA_STATE **)malloc(sizeof(NFA_STATE *)
+					       *(a0->number_of_prev_states));
+	a0->prev_states[0] = init_state;
 	a0->number_of_next_states = 1;
 	a0->next_states = (NFA_STATE **)malloc(sizeof(NFA_STATE *)
 					       *(a0->number_of_next_states));
@@ -121,11 +135,11 @@ int main()
 	h0->nfa_state_char = 'h';
 	h0->end_state = 1;
 
-	nfa->init_state = a0;
+	nfa->init_state = init_state;
 	nfa->end_state = h0;
 
 	// check if a given string matches a regex
-	if (check_match(&nfa, test_string)) {
+	if (check_match(&nfa, test_string, 8)) {
 		printf("The test string matches the regex.\n");
 	}
 	else {

@@ -1,6 +1,7 @@
 #ifndef REGEXM
 #define REGEXM
 
+#define INITIAL_MAX_NUM_ACTIVE_STATES 1
 
 typedef struct NFA_STATE{
         struct NFA_STATE **next_states;  // Array of states that come next.
@@ -21,7 +22,7 @@ void release_nfa(NFA **nfa);
 void init_nfa_state(NFA_STATE **nfa_state);
 void release_nfa_state(NFA_STATE **nfa_state);
 
-int check_match(NFA **nfa, char *test_string);
+int check_match(NFA **nfa, char *test_string, int len_test_string);
 
 void _recursive_nfa_state_release(NFA_STATE *nfa_state);
 #endif
