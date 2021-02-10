@@ -64,8 +64,9 @@ void release_nfa_state(NFA_STATE **nfa_state)
 
 int check_match(NFA **nfa, char *test_string, int len_test_string)
 {
-	int i, j;
+	int i, j, k, _i;
 	int max_num_active_states = INITIAL_MAX_NUM_ACTIVE_STATES;
+	int prev_num_active_states, cur_num_active_states;
 
 	// Checking for empty state, string case.
 	if (nfa == NULL
@@ -80,14 +81,41 @@ int check_match(NFA **nfa, char *test_string, int len_test_string)
 		if (len_test_string == 0)
 			return 0;
 
-	NFA_STATE **active_states = (NFA_STATE **)malloc(sizeof(NFA_STATE *)*max_num_active_states);
-	active_states[0] = (*nfa)->init_state;
+	NFA_STATE **cur_active_states = (NFA_STATE **)malloc(sizeof(NFA_STATE *)*max_num_active_states);
+	NFA_STATE **prev_active_states = (NFA_STATE **)malloc(sizeof(NFA_STATE *)*max_num_active_states);
+	prev_active_states[0] = (*nfa)->init_state;
+	prev_num_active_states = 1;
+	cur_num_active_states = 0;
 
 	for (i = 0; i < len_test_string; ++i) {
-		// Code for iterating through the states and checking if the
-		// given test string matches the regex.
+		for (j = 0; j < prev_num_active_states; ++j) {
+			for (k = 0; k < prev_active_states[j]->number_of_next_states; ++k) {
+				if (test_string[i] == prev_active_states[j]->next_states[k]->nfa_state_char) {
+					cur_active_states[cur_num_active_states++] = prev_active_states[j]->next_states[k];
+					if (cur_num_active_states >= max_num_active_states) {
+						max_num_active_states *= 2;
+						cur_active_states = (NFA_STATE **)realloc(cur_active_states,
+											  sizeof(NFA_STATE *)*max_num_active_states);
+					}
+				}
+			}
+		}
+		free(prev_active_states);
+		prev_num_active_states = cur_num_active_states;
+	        prev_active_states = (NFA_STATE **)malloc(sizeof(NFA_STATE *)*max_num_active_states);
+		prev_active_states = cur_active_states;
+		cur_active_states = (NFA_STATE **)malloc(sizeof(NFA_STATE *)*max_num_active_states);
+		cur_num_active_states = 0;
 	}
 
-	free(active_states);
+	free(cur_active_states);
+
+	for (i = 0; i < prev_num_active_states; ++i)
+		if (prev_active_states[i]->end_state == 1) {
+			free(prev_active_states);
+			return 1;
+		}
+
+	free(prev_active_states);
 	return 0;
 }

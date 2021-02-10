@@ -13,6 +13,7 @@ int main()
 {
 	NFA *nfa = NULL;
 	char *test_string = "abdefggh";
+	int test_string_length = 8;
 
 	// Initialize the nfa
 	init_nfa(&nfa);
@@ -139,7 +140,7 @@ int main()
 	nfa->end_state = h0;
 
 	// check if a given string matches a regex
-	if (check_match(&nfa, test_string, 8)) {
+	if (check_match(&nfa, test_string, test_string_length)) {
 		printf("The test string matches the regex.\n");
 	}
 	else {
